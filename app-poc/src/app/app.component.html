@@ -7,15 +7,18 @@
 </div>
 <form (ngSubmit)="onSubmit()" #form="ngForm">
   <div class="form-group">
-    <label for="name">Name</label>
+    <label for="name">Departure</label>
     <input type="text" class="form-control" id="name"
            [(ngModel)]="departure" name="departure"
-           [ngbTypeahead]="searchDeparture"
+           (ngModelChange)="searchDeparture($event)"
            #name="ngModel">
     <!--<div [hidden]="name.valid || name.pristine"-->
          <!--class="alert alert-danger">-->
       <!--Name is required-->
     <!--</div>-->
+    <select>
+      <option *ngFor="let airport of airports">{{airport.name + "-" + airport.iata}}</option>
+    </select>
   </div>
 </form>
 
