@@ -23,7 +23,7 @@
 //     });
 
 const puppeteer = require('puppeteer');
-const $ = require('cheerio');
+const cheerio = require('cheerio');
 var sleep = require('sleep');
 
 async function runBA() {
@@ -44,12 +44,15 @@ async function runBA() {
     const returnPicker = '#returnInputDate'
     const departDate = '#departInputDate_table > tbody > tr:nth-child(5) > td:nth-child(6) > div'
     const returnDateNext = '#returnInputDate_root > div > div > div > div > div.picker__header > div.picker__nav--next'
-    const returnDate = '#returnInputDate_table > tbody > tr:nth-child(5) > td:nth-child(4) > div'
+    const returnDate = '#returnInputDate_table > tbody > tr:nth-child(5) > td:nth-child(2) > div'
 
     const getFlights = '#submitBtn'
 
     const browser = await puppeteer.launch({
-        headless: false
+        headless: false,
+        args: [
+            `--proxy-server=38.106.69.195:8080`
+        ]
     });
 
     const page = await browser.newPage();
@@ -73,6 +76,7 @@ async function runBA() {
     await page.click(BUTTON_SELECTOR);
     await page.waitForNavigation();
 
+    // await 10000;
     await page.click(fromPicker)
     await page.keyboard.type(london)
 
@@ -87,7 +91,22 @@ async function runBA() {
     await page.click(returnDate)
 
     await page.click(getFlights)
+    console.log("Clicked get flights")
     await page.waitForNavigation();
+    //
+    const outbound = "#sector_1"
+    await page.waitForSelector(outbound);
+    console.log("Finished waiting for navigation")
+    // const inbound = "sector_2"
+    //
+    const bodyHandle = await page.$('body');
+    const html = await page.evaluate(body => body.innerHTML, bodyHandle);
+    // console.log(html);
+    const $ = cheerio.load(html);
+    console.log($(outbound));
+    // const result = await page.evaluate(() =>{
+    //     console.log(document.querySelector(outbound))
+    // })
 
 }
 
@@ -136,4 +155,4 @@ async function runSQ() {
 
 }
 
-runSQ();
+runBA();
